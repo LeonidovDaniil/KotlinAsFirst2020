@@ -112,7 +112,13 @@ fun buildGrades(grades: Map<String, Int>): Map<Int, List<String>> = TODO()
  *   containsIn(mapOf("a" to "z"), mapOf("a" to "z", "b" to "sweet")) -> true
  *   containsIn(mapOf("a" to "z"), mapOf("a" to "zee", "b" to "sweet")) -> false
  */
-fun containsIn(a: Map<String, String>, b: Map<String, String>): Boolean = TODO()
+fun containsIn(a: Map<String, String>, b: Map<String, String>): Boolean {
+    for ((frA, scA) in a) {
+        if (!b.containsKey(frA) || b[frA] != scA)
+            return false
+    }
+    return true
+}
 
 /**
  * Простая (2 балла)
@@ -129,7 +135,7 @@ fun containsIn(a: Map<String, String>, b: Map<String, String>): Boolean = TODO()
  *     -> a changes to mutableMapOf() aka becomes empty
  */
 fun subtractOf(a: MutableMap<String, String>, b: Map<String, String>) {
-    TODO()
+    for ((frB, scB) in b) a.remove(frB, scB)
 }
 
 /**
@@ -158,7 +164,15 @@ fun whoAreInBoth(a: List<String>, b: List<String>): List<String> = TODO()
  *     mapOf("Emergency" to "911", "Police" to "02")
  *   ) -> mapOf("Emergency" to "112, 911", "Police" to "02")
  */
-fun mergePhoneBooks(mapA: Map<String, String>, mapB: Map<String, String>): Map<String, String> = TODO()
+fun mergePhoneBooks(mapA: Map<String, String>, mapB: Map<String, String>): Map<String, String> {
+    val phoneBook = mutableMapOf<String, String>()
+    for ((denomination, phoneNumber) in mapA) phoneBook[denomination] = phoneNumber
+    for ((denomination, phoneNumber) in mapB) {
+        if (phoneBook[denomination] == null) phoneBook[denomination] = phoneNumber
+        else if (phoneNumber != phoneBook[denomination]) phoneBook[denomination] += ", $phoneNumber"
+    }
+    return phoneBook
+}
 
 /**
  * Средняя (4 балла)
@@ -218,7 +232,14 @@ fun canBuildFrom(chars: List<Char>, word: String): Boolean {
  * Например:
  *   extractRepeats(listOf("a", "b", "a")) -> mapOf("a" to 2)
  */
-fun extractRepeats(list: List<String>): Map<String, Int> = TODO()
+fun extractRepeats(list: List<String>): Map<String, Int> {
+    val result = mutableMapOf<String, Int>()
+    for (i in list.indices) {
+        if (result[list[i]] == null) result[list[i]] = 1
+        else result[list[i]] = result[list[i]]!! + 1
+    }
+    return result.filter { it.value > 1 }
+}
 
 
 /**

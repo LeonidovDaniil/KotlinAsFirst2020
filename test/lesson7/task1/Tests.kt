@@ -455,4 +455,27 @@ Basic, Ruby, Swift.
 
         File("temp.txt").delete()
     }
+
+    @Test
+    fun work() {
+        assertEquals(
+            work("input/Diplom.txt", "input/rus1.txt"),
+            """//начало ДИПЛОМА
+На сегодняшний день важность качества програмого обеспечения
+невозможно переоценить, так как оно используется в самых разных
+областях человеческой деятельности. /* Дабавить сылку!!! */
+"""
+        )
+    }
+
+    @Test
+    fun work2() {
+        assertEquals(work2("input/granpri.txt"), "Мерседес, 20")
+    }
+
+    @Test
+    fun myFun() {
+        assertEquals("Зенит", myFun("input/text.txt"))
+    }
 }
+

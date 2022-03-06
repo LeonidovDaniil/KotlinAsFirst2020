@@ -3,6 +3,8 @@ package lesson4.task1
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
+import java.lang.IllegalArgumentException
 
 class Tests {
     @Test
@@ -239,4 +241,22 @@ class Tests {
         assertEquals("девятьсот тысяч", russian(900000))
         assertEquals("двенадцать", russian(12))
     }
+
+
+    @Test
+    fun casesPerDay() {
+        assertEquals(
+            mapOf("понедельник" to 1, "вторник" to 2),
+            casesPerDay(listOf("понедельник - лекция;", "вторник - друзья;", "вторник - кинотеатр;"))
+        )
+        assertEquals(
+            mapOf("понедельник" to 1, "вторник" to 1),
+            casesPerDay(listOf("понедельник - уборка;", "вторник - прогулка"))
+        )
+        assertThrows<IllegalArgumentException> {
+            casesPerDay(listOf("тридельник - уроки", "вторник - лекции"))
+        }
+    }
 }
+
+

@@ -77,7 +77,20 @@ fun deleteMarked(inputName: String, outputName: String) {
  * Регистр букв игнорировать, то есть буквы е и Е считать одинаковыми.
  *
  */
-fun countSubstrings(inputName: String, substrings: List<String>): Map<String, Int> = TODO()
+fun countSubstrings(inputName: String, substrings: List<String>): Map<String, Int> {
+    val res = mutableMapOf<String, Int>()
+    for (i in substrings.indices) res[substrings[i]] = 0
+    val lines = File(inputName).readLines()
+    for (line in lines)
+        for (str in res.keys) {
+            var index = line.lowercase().indexOf(str.lowercase())
+            while (index != -1) {
+                index = line.lowercase().indexOf(str.lowercase(), index + 1)
+                res[str] = res[str]!! + 1
+            }
+        }
+    return res
+}
 
 
 /**
@@ -115,6 +128,7 @@ fun sibilants(inputName: String, outputName: String) {
     writer.close()
 }
 
+
 /**
  * Средняя (15 баллов)
  *
@@ -133,7 +147,20 @@ fun sibilants(inputName: String, outputName: String) {
  *
  */
 fun centerFile(inputName: String, outputName: String) {
-    TODO()
+    var theLongestLine = ""
+    val writer = File(outputName).bufferedWriter()
+    val allLines = File(inputName).readLines()
+    for (line in allLines)
+        if (theLongestLine.length < line.trim().length)
+            theLongestLine = line.trim()
+    for (line in allLines) {
+        val newLine = StringBuilder(line.trim())
+        for (i in 0 until (theLongestLine.length - newLine.length) / 2)
+            newLine.insert(0, " ")
+        writer.write(newLine.toString())
+        writer.newLine()
+    }
+    writer.close()
 }
 
 /**
@@ -483,3 +510,83 @@ fun printDivisionProcess(lhv: Int, rhv: Int, outputName: String) {
     TODO()
 }
 
+fun work(inputName: String, dictFileName: String): String {
+    val a = mutableMapOf<String, String>()
+    File(dictFileName).forEachLine { line ->
+        val b = Regex("""[а-яА-Я]+""").findAll(line, 0).map { it.value }.toList()
+        a[b.get(0)] = b.subList(1, b.size).joinToString(separator = " ")
+    }
+    var result = ""
+    File(inputName).forEachLine { line ->
+        var c = line
+        a.forEach { t, u ->
+            c = c.replace(t, u, true)
+        }
+        result += c + "\n"
+    }
+
+    return result
+}
+
+fun work2(inputName: String): String {
+    val a = mutableMapOf<String, Int>()
+    File(inputName).forEachLine { line ->
+        val b = Regex("""^[а-яА-Я]\. [а-яА-Я]+, (.+), (\d+)$""").matchEntire(line)
+        if (b != null){
+            a[b.groupValues[1]] = a[b.groupValues[1]]?.plus(b.groupValues[2].toInt()) ?: b.groupValues[2].toInt()
+        }
+
+    }
+    var b = Pair("", -1)
+    a.forEach { t, u ->
+        if (b.second < u){
+            b = Pair(t, u)
+        }
+    }
+    return "${b.first}, ${b.second}"
+}
+
+
+fun myFun(inputName: String): String {
+    val table = mutableListOf<Pair<String, MutableList<Char>>>()
+    val regex = """^([0WDL] )+-.+$""".toRegex()
+    val regex2 = """- (.+)""".toRegex()
+    val regex3 = """[0WDL]""".toRegex()
+    File(inputName).forEachLine { line ->
+        if (!line.matches(regex)) throw IllegalStateException()
+        table.add(Pair(regex2.find(line)!!.groupValues.last(), mutableListOf()))
+        regex3.findAll(line).forEach { table.last().second.add(it.value.toCharArray().last()) }
+    }
+    val map = mapOf('W' to 'L', 'L' to 'W', 'D' to 'D')
+    for (i in 0 until table.size) {
+        if (table.size != table[i].second.size) throw IllegalStateException()
+        for (j in 0 until i) {
+            if (table[i].second[j] == '0' || table[j].second[i] == '0') throw IllegalStateException()
+            if (table[i].second[j] != map[table[j].second[i]]) throw IllegalStateException()
+        }
+        if (table[i].second[i] != '0') throw IllegalStateException()
+    }
+    // Удовлетворительно
+    var max = Pair(-1, "-1")
+    for (i in table) {
+        var sum = 0
+        for (j in i.second) {
+            sum += when (j) {
+                'W' -> 3
+                'D' -> 1
+                else -> 0
+            }
+        }
+        if (max.first < sum) {
+            max = Pair(sum, i.first)
+        }
+    }
+    if (max.first == -1) throw IllegalStateException()
+    return max.second
+}
+
+//File(outputName).bufferedWriter().use { it.appendLine(answer.second.joinToString()) }
+//File(outputName).bufferedWriter().use { writer ->
+//for (i in text)
+//writer.appendLine(i.padStart(i.length + (maxSize - i.length) / 2, ' '))
+//}
